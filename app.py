@@ -139,7 +139,7 @@ class MakeApiCall:
         features3 = [ph3, (oc3/1000.0), nitrogen3, (sand3/10.0), (silt3/10.0), (clay3/10.0), (cec3/10.0)]
         features4 = [ph4, (oc4/1000.0), nitrogen4, (sand4/10.0), (silt4/10.0), (clay4/10.0), (cec4/10.0)]
         pred = self.generatePredictions(features1, features2, features3, features4)
-        print(features1)
+        
         return {
                     'cec':{
                         'cec[0 - 5cm]': cec1, 'cec[5 - 15cm]': cec2, 'cec[15 - 30cm]': cec3, 'cec[30 - 60cm]':cec4, 'unit' : 'cmol(c)/kg'
@@ -174,6 +174,83 @@ class MakeApiCall:
             "username": "kedark"
         }
 
+class MakeCropRecommendation:
+    lat = 0
+    lon = 0
+    def get_data(self, api):
+        response = requests.get(f"{api}")
+        if response.status_code == 200:
+            print("sucessfully fetched the data")
+            self.formatted_print(response.json())
+        else:
+            print(
+                f"Hello person, there's a {response.status_code} error with your request")
+
+    def get_user_data(self, api, p):
+        response = requests.get(f"{api}")
+        if response.status_code == 200:
+            # print("sucessfully fetched the data with parameters provided")
+            res = self.formatted_print(response.json(), p)
+        else:
+            res = "Hello person, there's a {response.status_code} error with your requests"
+            # print(f"Hello person, there's a {response.status_code} error with your requests")
+        return res
+    
+    
+    def formatted_print(self, obj, p):
+        text = json.dumps(obj, sort_keys=True, indent=4)
+        # print(text)
+        dj = DecodeJSON(text)
+        r = 0
+        
+        for i in range(0,30):
+            r = r + dj.forecast['forecastday'][i]['day']["totalprecip_mm"]
+        humidity =  dj.forecast['forecastday'][0]['day']["avghumidity"]
+        temperature =  dj.forecast['forecastday'][0]['day']["avgtemp_c"]
+        rain = r
+        ph1 = p['pH']["ph[0 - 5cm]"]
+        ph2 = p['pH']["ph[5 - 15cm]"]
+        ph3 = p['pH']["ph[15 - 30cm]"]
+        ph4 = p['pH']["ph[30 - 60cm]"]
+        n1 = p['nitrogen']["nitrogen[0 - 5cm]"]
+        n2 = p['nitrogen']["nitrogen[5 - 15cm]"]
+        n3 = p['nitrogen']["nitrogen[15 - 30cm]"]
+        n4 = p['nitrogen']["nitrogen[30 - 60cm]"]
+
+        crop_model = model = joblib.load('./templates/crop_model.pkl')
+        crop_scaler = model = joblib.load('./templates/crop_scaler.pkl')
+
+        f1 = [n1, temperature, humidity, ph1, rain]
+        f2 = [n2, temperature, humidity, ph2, rain]
+        f3 = [n3, temperature, humidity, ph3, rain]
+        f4 = [n4, temperature, humidity, ph4, rain]
+        print(f1)
+        f1 = crop_scaler.transform([f1])
+        f2 = crop_scaler.transform([f2])
+        f3 = crop_scaler.transform([f3])
+        f4 = crop_scaler.transform([f4])
+
+        pred1 = crop_model.predict(f1)
+        pred2 = crop_model.predict(f2)
+        pred3 = crop_model.predict(f3)
+        pred4 = crop_model.predict(f4)
+        print(f1)
+        return {
+            "humidity" : humidity,
+            "temperature" : temperature,
+            "rain" : rain,
+            "crop[0 - 5cm]" : pred1[0],
+            "crop[5 - 15cm]" : pred2[0],
+            "crop[15 - 30cm]" : pred3[0],
+            "crop[30 - 60cm]" : pred4[0] 
+        }
+
+    def __init__(self, api):
+        parameters = {
+            "username": "kedark"
+        }
+
+
 @app.route('/',methods=["GET","POST"])
 def home():
     return "Agri11"
@@ -182,6 +259,8 @@ def home():
 def predict():
     lat = str(request.args.get('Lat'))
     long = str(request.args.get('Long'))
+    dt = str(request.args.get('date'))
+    end_dt = str(request.args.get('end_dt'))
     api_call = MakeApiCall("https://rest.isric.org/soilgrids/v2.0/properties/query")
     parameters = {
                 "lon" : long, 
@@ -191,7 +270,11 @@ def predict():
                 "value" : ['mean', 'uncertainty']
             }
     res = api_call.get_user_data("https://rest.isric.org/soilgrids/v2.0/properties/query", parameters)
-    return jsonify(res)
+    url = "http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={},{}&dt={}&hour=15&end_dt={}".format(lat,long,dt,end_dt)
+    api_call1 = MakeCropRecommendation("https://rest.isric.org/soilgrids/v2.0/properties/query")
+    crop = api_call1.get_user_data(url, res)
+    pred = {'Fertility' : res, 'crop' : crop}
+    return jsonify(pred)
   
 if __name__ == "__main__":
     app.run(debug=True)

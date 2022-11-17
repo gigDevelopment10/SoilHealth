@@ -45,8 +45,15 @@ if __name__ == "__main__":
     # long = input("Enter Longititude: ")
 
     parameters = {
-            "Lat": "22.860485",
-            "Long" : "75.691551"
+            "Lat" : "19.704656",
+            "Long" : "74.248489",
+            "date" : "2022-07-01",
+            "end_dt" : "2022-07-30"
         }
-    api_call = MakeApiCall("http://127.0.0.1:5000/")
+    appid='1e6404a478eb82a222f938c29dd8a262'
+    lat= "15.203628"
+    lon= "74.513289"
+    api_call = MakeApiCall("http://127.0.0.1:5000")
+    #api_call.get_data("http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={lat},{lon}&dt=2022-07-01&hour=15")
+    #print("http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={lat},{lon}&dt=2022-07-01&hour=15")
     api_call.get_user_data("http://127.0.0.1:5000/post", parameters)
