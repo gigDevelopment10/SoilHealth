@@ -150,7 +150,7 @@ class MakeApiCall:
                     'nitrogen' :{
                         'nitrogen[0 - 5cm]': nitrogen1, 'nitrogen[5 - 15cm]': nitrogen2, 'nitrogen[15 - 30cm]': nitrogen3, 'nitrogen[30 - 60cm]':nitrogen4, 'unit': 'g/kg'
                     },
-                    'pH' : {
+                    'ph' : {
                         'ph[0 - 5cm]': ph1, 'ph[5 - 15cm]': ph2, 'ph[15 - 30cm]': ph3, 'ph[30 - 60cm]':ph4, 'unit': 'pH'
                     },
                     'sand' : {
@@ -163,7 +163,7 @@ class MakeApiCall:
                         'oc[0 - 5cm]': oc1, 'oc[5 - 15cm]': oc2, 'oc[15 - 30cm]': oc3, 'oc[30 - 60cm]':oc4, 'unit': 'g/kg'
                     },
                     'ocd' : {
-                        'ocd[0 - 5cm]': ocd1, 'ocd[5 - 15cm]': ocd2, 'oc[15 - 30cm]': ocd3, 'oc[30 - 60cm]':ocd4, 'unit': 'kg/m³'
+                        'ocd[0 - 5cm]': ocd1, 'ocd[5 - 15cm]': ocd2, 'ocd[15 - 30cm]': ocd3, 'ocd[30 - 60cm]':ocd4, 'unit': 'kg/m³'
                     },
                     'predictions' : pred
                 }
