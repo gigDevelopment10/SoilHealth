@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 image = cv2.imread('templates\\1.jfif')
 cv2.imshow('Original',image)
-print(image.size
+print(image.size)
 color = image[150, 150]
 print(color)
 grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
