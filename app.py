@@ -273,7 +273,7 @@ def predict():
     url = "http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={},{}&dt={}&hour=15&end_dt={}".format(lat,long,dt,end_dt)
     api_call1 = MakeCropRecommendation("https://rest.isric.org/soilgrids/v2.0/properties/query")
     crop = api_call1.get_user_data(url, res)
-    pred = {'Fertility' : res, 'crop' : crop}
+    pred = {'Parameters' : [lat, long, dt, end_dt],'Fertility' : res, 'crop' : crop}
     return jsonify(pred)
   
 if __name__ == "__main__":

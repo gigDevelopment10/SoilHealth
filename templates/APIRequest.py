@@ -56,4 +56,5 @@ if __name__ == "__main__":
     api_call = MakeApiCall("http://127.0.0.1:5000")
     #api_call.get_data("http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={lat},{lon}&dt=2022-07-01&hour=15")
     #print("http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={lat},{lon}&dt=2022-07-01&hour=15")
-    api_call.get_user_data("https://soil-health.herokuapp.com/post", parameters)
+    #api_call.get_user_data("https://soil-health.herokuapp.com/post", parameters)
+    api_call.get_user_data("http://127.0.0.1:5000/post", parameters)
