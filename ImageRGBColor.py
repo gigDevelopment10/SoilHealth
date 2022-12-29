@@ -3,11 +3,14 @@ from PIL import ImageFilter, Image
 import numpy
 import matplotlib.pyplot as plt
 
-image = cv2.imread('templates\\1.jfif')
+image = cv2.imread('templates\\alluvial.jfif')
 cv2.imshow('Original',image)
-print(image.size)
-color = image[150, 150]
-print(color)
+totpixel = len(image)
+b,g,r= image[150, 150]
+average = image.mean(axis=0).mean(axis=0)
+print("{}, {}, {}".format(b,g,r))
+print("{}, {}, {}".format(r,g,b))
+print(average)
 grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 cv2.imshow('Grayscale', grayscale)
 im = Image.fromarray(grayscale)
