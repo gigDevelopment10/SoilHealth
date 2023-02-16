@@ -13,7 +13,6 @@ current_dir = dirname(__file__)
 # model_path = join(current_dir, "./model.pkl")
 model = joblib.load('./templates/model.pkl')
 
-
 class DecodeJSON(object):
     def __init__(self, data):
 	    self.__dict__ = json.loads(data)
@@ -249,7 +248,6 @@ class MakeCropRecommendation:
         parameters = {
             "username": "kedark"
         }
-
 
 @app.route('/',methods=["GET","POST"])
 def home():
