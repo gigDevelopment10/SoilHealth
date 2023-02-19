@@ -4,15 +4,13 @@ from os.path import dirname, join
 import joblib
 import requests
 import json
-import pandas as pd
-import numpy as np
-import os
+import pickle
 
 app = Flask(__name__)
 CORS(app)
 current_dir = dirname(__file__)
 # model_path = join(current_dir, "./model.pkl")
-model = joblib.load('./templates/model.pkl')
+model = pickle.load(open('./templates/modelv2.pkl', 'rb'))
 
 class DecodeJSON(object):
     def __init__(self, data):
@@ -40,7 +38,7 @@ class MakeApiCall:
         return res
     
     def generatePredictions(self, f1, f2, f3, f4):
-        sc = joblib.load('./templates/scaler.pkl')
+        sc = pickle.load(open('./templates/scalerv2.pkl', 'rb'))
         to_predict1 = sc.transform([f1])
         to_predict2 = sc.transform([f2])
         to_predict3 = sc.transform([f3])
@@ -217,8 +215,8 @@ class MakeCropRecommendation:
         n3 = p['nitrogen']["nitrogen[15 - 30cm]"]
         n4 = p['nitrogen']["nitrogen[30 - 60cm]"]
 
-        crop_model = model = joblib.load('./templates/crop_model.pkl')
-        crop_scaler = model = joblib.load('./templates/crop_scaler.pkl')
+        crop_model = joblib.load('./templates/crop_model.pkl')
+        crop_scaler = joblib.load('./templates/crop_scaler.pkl')
 
         f1 = [n1, temperature, humidity, ph1, rain]
         f2 = [n2, temperature, humidity, ph2, rain]
@@ -269,12 +267,12 @@ def predict():
                 "value" : ['mean', 'uncertainty']
             }
     res = api_call.get_user_data("https://rest.isric.org/soilgrids/v2.0/properties/query", parameters)
-    url = "http://api.weatherapi.com/v1/history.json?key=c6520399656c4760937143836221711&q={},{}&dt={}&hour=15&end_dt={}".format(lat,long,dt,end_dt)
+    url = "http://api.weatherapi.com/v1/history.json?key=9d99901a21c54149a7d72015231902&q={},{}&dt={}&hour=15&end_dt={}".format(lat,long,dt,end_dt)
     api_call1 = MakeCropRecommendation("https://rest.isric.org/soilgrids/v2.0/properties/query")
     crop = api_call1.get_user_data(url, res)
     pred = {'Parameters' : [lat, long, dt, end_dt],'Fertility' : res, 'crop' : crop}
     return jsonify(pred)
   
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host = '0.0.0.0', port = port)
+    # port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True)

@@ -18,6 +18,7 @@ class MakeApiCall:
 
     def get_user_data(self, api, parameters):
         response = requests.post(f"{api}", params=parameters)
+        print(parameters)
         if response.status_code == 200:
             print("sucessfully fetched the data with parameters provided")
             self.formatted_print(response.json())
